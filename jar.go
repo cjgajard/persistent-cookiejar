@@ -72,6 +72,9 @@ type Options struct {
 	// (useful for tests). If this is true, the value of Filename will be
 	// ignored.
 	NoPersist bool
+
+	// SaveAll allows to save non-persistent cookies.
+	SaveAll bool
 }
 
 // Jar implements the http.CookieJar interface from the net/http package.
@@ -87,6 +90,9 @@ type Jar struct {
 	// entries is a set of entries, keyed by their eTLD+1 and subkeyed by
 	// their name/domain/path.
 	entries map[string]map[string]entry
+
+	// saveAll allows to save non-persistent cookies.
+	saveAll bool
 }
 
 var noOptions Options
@@ -119,6 +125,7 @@ func newAtTime(o *Options, now time.Time) (*Jar, error) {
 			return nil, errgo.Notef(err, "cannot load cookies")
 		}
 	}
+	jar.saveAll = o.SaveAll
 	jar.deleteExpired(now)
 	return jar, nil
 }
